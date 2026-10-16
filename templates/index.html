@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pune Smart Route Optimizer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Dashboard -->
+        <div class="sidebar">
+            <div class="header">
+                <h1><i class="fa-solid fa-route"></i> Pune Smart Route</h1>
+                <p>Powered by C++ (A* Search & KD-Tree)</p>
+            </div>
+            
+            <div class="weather-widget">
+                <i class="fa-solid fa-temperature-half"></i> Pune Weather: 
+                <strong>{{ weather.temp }}°C ({{ weather.description }})</strong>
+                {% if weather.raining %}
+                <br><small style="color: #e74c3c">Rain detected! C++ engine will penalize open transport.</small>
+                {% endif %}
+            </div>
+
+            <form id="route-form">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> From: <small>(Or click map)</small></label>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" id="live-loc-btn" title="Use My Current Location" style="background: #3498db; color: white; border: none; border-radius: 5px; padding: 10px 15px; cursor: pointer; transition: 0.3s;">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </button>
+                        <select id="source" required style="flex-grow: 1;">
+                            <option value="__LIVE_GPS__" id="live-loc-option" class="hidden">📍 Current Location / Doorstep</option>
+                            {% for loc in locations %}
+                            <option value="{{ loc }}">{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dynamic Multi-Stop (Waypoints) Container -->
+                <div id="waypoints-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;"></div>
+
+                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" id="add-stop-btn" style="width: auto; margin-top: 0; padding: 7px 12px; font-size: 12px; background: #4f46e5; border-radius: 6px;">
+                        <i class="fa-solid fa-plus"></i> Add Stop (Via)
+                    </button>
+                    <label style="font-size: 12px; margin-bottom: 0; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #3730a3;">
+                        <input type="checkbox" id="tsp-toggle" checked style="cursor: pointer; width: 15px; height: 15px;">
+                        <span><strong>⚡ Optimize Order (TSP)</strong></span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fa-solid fa-flag-checkered"></i> To: <small>(Or click map)</small></label>
+                    <select id="destination" required>
+                        {% for loc in locations %}
+                        <option value="{{ loc }}">{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-sliders"></i> Optimize For:</label>
+                    <select id="preference">
+                        <option value="cost">💰 Cheapest Route (Save Money)</option>
+                        <option value="time">⚡ Fastest Route (Save Time)</option>
+                        <option value="eco">🍃 Eco-Friendly (Low Carbon)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group toggle-group">
+                    <label><i class="fa-solid fa-car-burst"></i> Rush Hour Traffic:</label>
+                    <label class="switch">
+                      <input type="checkbox" id="traffic-toggle">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <button type="submit" id="submit-btn">
+                    <span>Find Optimal Route</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div id="loader" class="hidden">
+                <div class="spinner"></div>
+                <p>C++ Engine Computing...</p>
+            </div>
+
+            <div id="results" class="hidden">
+                <h3>Optimal Path Results</h3>
+                
+                <div id="first-mile-banner" class="hidden" style="background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; line-height: 1.45;">
+                    <i class="fa-solid fa-person-walking"></i> <strong>First-Mile Door-to-Door Connected!</strong><br>
+                    <span id="first-mile-text" style="font-size: 12px; color: #047857;"></span>
+                </div>
+
+                <div id="tsp-reorder-banner" class="hidden" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; line-height: 1.45;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <strong>Itinerary Optimized via TSP (Held-Karp DP)!</strong><br>
+                    <span id="tsp-reorder-text" style="font-size: 12px; color: #065f46;"></span>
+                </div>
+                
+                <div id="traffic-alert" class="hidden" style="color:#e67e22; font-weight:bold; margin-bottom:10px; font-size:13px; text-align:center;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Heavy traffic detected! Times adjusted.
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-box cost-box">
+                        <h4>Total Cost</h4>
+                        <p id="total-cost"><i class="fa-solid fa-indian-rupee-sign"></i> 0</p>
+                    </div>
+                    <div class="stat-box time-box">
+                        <h4>Total Time</h4>
+                        <p id="total-time"><i class="fa-regular fa-clock"></i> 0 mins</p>
+                    </div>
+                </div>
+                <div class="stat-box eco-box" style="margin-bottom: 20px;">
+                    <h4>Total Carbon Emissions</h4>
+                    <p id="total-carbon"><i class="fa-solid fa-leaf"></i> 0 units</p>
+                </div>
+                
+                <!-- Live Journey Navigation & Tracking Section -->
+                <div class="nav-control-panel" style="margin-top: 20px; padding: 16px; background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 10px;">
+                    <h4 style="color: #3730a3; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fa-solid fa-location-arrow"></i> Live Journey Navigation</span>
+                        <span id="nav-live-badge" class="badge" style="font-size: 11px; padding: 3px 8px; border-radius: 12px; background: #e0e7ff; color: #4338ca;">Ready</span>
+                    </h4>
+                    
+                    <div id="nav-setup-controls" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <button type="button" id="start-nav-btn" style="flex: 1; margin-top: 0; padding: 10px; font-size: 14px; background: #4361ee;">
+                            <i class="fa-solid fa-play"></i> Start Navigation
+                        </button>
+                        <select id="nav-mode-select" style="width: 140px; padding: 8px; font-size: 13px;">
+                            <option value="sim">Simulate Ride</option>
+                            <option value="gps">Real GPS Live</option>
+                        </select>
+                    </div>
+
+                    <!-- Active Navigation HUD -->
+                    <div id="nav-active-hud" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span id="nav-current-mode" style="font-weight: bold; font-size: 13px; color: #1e1b4b;">
+                                <i class="fa-solid fa-person-walking"></i> Journey in Progress...
+                            </span>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" id="pause-nav-btn" class="nav-btn-sm" title="Pause / Resume" style="width: auto; margin-top: 0; padding: 5px 10px; font-size: 12px; background: #f59e0b;">
+                                    <i class="fa-solid fa-pause"></i>
+                                </button>
+                                <button type="button" id="stop-nav-btn" class="nav-btn-sm" title="End Journey" style="width: auto; margin-top: 0; padding: 5px 10px; font-size: 12px; background: #ef4444;">
+                                    <i class="fa-solid fa-stop"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Arrival Notification Signal Card (Appears on Dashboard upon Arrival) -->
+                        <div id="nav-arrival-banner" class="hidden" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2px solid #10b981; border-radius: 8px; padding: 12px; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); animation: fadeIn 0.4s ease;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 800; color: #065f46;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 18px; color: #10b981;"></i>
+                                <span>You Have Arrived!</span>
+                            </div>
+                            <div id="nav-arrival-dest-text" style="font-size: 12px; color: #047857; margin-top: 4px; font-weight: 600;">
+                                Successfully reached your final destination.
+                            </div>
+                            <button type="button" id="nav-arrival-done-btn" style="width: auto; margin: 8px auto 0; padding: 5px 14px; font-size: 12px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fa-solid fa-rotate-left"></i> Reset / Done
+                            </button>
+                        </div>
+
+                        <!-- Upcoming Station / Milestone Card -->
+                        <div id="nav-next-station-card" style="background: white; border-radius: 8px; padding: 10px; border-left: 4px solid #4361ee; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Upcoming Milestone</div>
+                            <div id="nav-next-stop-name" style="font-size: 14px; font-weight: bold; color: #0f172a; margin-top: 2px;">
+                                Loading next stop...
+                            </div>
+                            <div id="nav-next-stop-dist" style="font-size: 12px; color: #475569; margin-top: 2px;">
+                                Approaching in calculating...
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div style="margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-bottom: 4px;">
+                                <span>Journey Progress</span>
+                                <span id="nav-progress-percent">0%</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                <div id="nav-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4361ee, #22c55e); transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Deviation / Off-Route Status -->
+                        <div id="nav-reroute-alert" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; text-align: center;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> <strong>Deviated from Route!</strong> Auto-Rerouting via C++ KD-Tree...
+                        </div>
+
+                        <div id="nav-speed-control" style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #475569;">
+                            <span>Speed:</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="speed-btn" data-speed="0.5" style="width: auto; margin-top:0; padding: 3px 8px; font-size: 11px; background:#94a3b8;">0.5x Slow</button>
+                                <button type="button" class="speed-btn active" data-speed="1" style="width: auto; margin-top:0; padding: 3px 8px; font-size: 11px; background:#4361ee;">1x</button>
+                                <button type="button" class="speed-btn" data-speed="2" style="width: auto; margin-top:0; padding: 3px 8px; font-size: 11px; background:#94a3b8;">2x</button>
+                                <button type="button" class="speed-btn" data-speed="4" style="width: auto; margin-top:0; padding: 3px 8px; font-size: 11px; background:#94a3b8;">4x</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Step-by-Step Directions</h4>
+                <ul id="path-list"></ul>
+            </div>
+            <div id="error-msg" class="hidden error"></div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script>
+        window.appCoordinates = {{ coordinates | tojson }};
+    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-ant-path@1.3.0/dist/leaflet-ant-path.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
