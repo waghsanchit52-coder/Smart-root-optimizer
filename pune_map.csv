@@ -47,3 +47,83 @@ Baner,Shivaji Nagar,20.0,30.0,Bus,15.0
 Baner,Shivaji Nagar,150.0,20.0,Cab,40.0
 Baner,Pune University,10.0,15.0,Bus,5.0
 Pune University,Shivaji Nagar,10.0,15.0,Bus,5.0
+Katraj Bus Stand,Swargate,22.3,14.7,Bus,92.1
+Swargate,Katraj Bus Stand,22.3,14.7,Bus,92.1
+Katraj Bus Stand,Mahatma Phule Mandai,25.0,17.9,Bus,112.2
+Mahatma Phule Mandai,Katraj Bus Stand,25.0,17.9,Bus,112.2
+Kothrud Bus Stand,Anand Nagar,10.3,0.3,Bus,2.1
+Anand Nagar,Kothrud Bus Stand,10.3,0.3,Bus,2.1
+Kothrud Bus Stand,Kothrud,11.8,2.2,Bus,13.7
+Kothrud,Kothrud Bus Stand,11.8,2.2,Bus,13.7
+Hadapsar Bus Stand,Kharadi Bypass,21.0,13.2,Bus,82.4
+Kharadi Bypass,Hadapsar Bus Stand,21.0,13.2,Bus,82.4
+Hadapsar Bus Stand,Ramwadi,22.5,15.0,Bus,93.6
+Ramwadi,Hadapsar Bus Stand,22.5,15.0,Bus,93.6
+Hinjewadi Phase 1,Hinjewadi,10.6,0.8,Bus,4.8
+Hinjewadi,Hinjewadi Phase 1,10.6,0.8,Bus,4.8
+Hinjewadi Phase 1,Wakad Bridge,13.9,4.6,Bus,28.9
+Wakad Bridge,Hinjewadi Phase 1,13.9,4.6,Bus,28.9
+Viman Nagar,Pune Airport,12.9,3.5,Bus,22.1
+Pune Airport,Viman Nagar,12.9,3.5,Bus,22.1
+Viman Nagar,Ramwadi,14.1,5.0,Bus,31.0
+Ramwadi,Viman Nagar,14.1,5.0,Bus,31.0
+Kharadi Bypass,Ramwadi,14.4,5.3,Bus,33.3
+Ramwadi,Kharadi Bypass,14.4,5.3,Bus,33.3
+Kharadi Bypass,Viman Nagar,16.3,7.5,Bus,47.0
+Viman Nagar,Kharadi Bypass,16.3,7.5,Bus,47.0
+Vishrantwadi,Yerawada,16.8,8.2,Bus,51.0
+Yerawada,Vishrantwadi,16.8,8.2,Bus,51.0
+Vishrantwadi,Viman Nagar,17.4,8.9,Bus,55.6
+Viman Nagar,Vishrantwadi,17.4,8.9,Bus,55.6
+Baner Phata,Pune University,13.4,4.0,Bus,25.3
+Pune University,Baner Phata,13.4,4.0,Bus,25.3
+Baner Phata,Baner,15.2,6.2,Bus,38.9
+Baner,Baner Phata,15.2,6.2,Bus,38.9
+Wakad Bridge,Hinjewadi,13.8,4.6,Bus,28.5
+Hinjewadi,Wakad Bridge,13.8,4.6,Bus,28.5
+Wakad Bridge,Hinjewadi Phase 1,13.9,4.6,Bus,28.9
+Hinjewadi Phase 1,Wakad Bridge,13.9,4.6,Bus,28.9
+Nigdi (Bhakti Shakti),Akurdi Station,10.0,10.0,Bus,5.0
+Akurdi Station,Chinchwad Station,10.0,8.0,Bus,4.0
+Chinchwad Station,PCMC,10.0,6.0,Bus,3.0
+Nigdi (Bhakti Shakti),PCMC,80.0,15.0,Cab,25.0
+Bhosari MIDC,Nashik Phata,15.0,12.0,Bus,8.0
+Bhosari MIDC,Kasarwadi,60.0,10.0,Auto,15.0
+Pimple Saudagar,Kasarwadi,15.0,10.0,Bus,6.0
+Pimple Saudagar,Wakad Bridge,40.0,8.0,Auto,10.0
+Wakad Chowk,Wakad Bridge,10.0,5.0,Auto,4.0
+Wakad Chowk,Hinjewadi Phase 1,15.0,10.0,Bus,7.0
+Hinjewadi Phase 1,Hinjewadi Phase 2,10.0,8.0,Bus,5.0
+Hinjewadi Phase 2,Hinjewadi Phase 3,10.0,7.0,Bus,4.0
+Hinjewadi Phase 1,Hinjewadi Phase 3,90.0,15.0,Cab,22.0
+Aundh (Parihar Chowk),Baner Phata,15.0,8.0,Auto,5.0
+Aundh (Parihar Chowk),Pune University,10.0,10.0,Bus,6.0
+Aundh (Parihar Chowk),Khadki,15.0,12.0,Bus,8.0
+Chandani Chowk,Kothrud Bus Stand,15.0,10.0,Bus,6.0
+Chandani Chowk,Vanaz,40.0,8.0,Auto,10.0
+Chandani Chowk,Baner,120.0,18.0,Cab,35.0
+FC Road,Deccan Gymkhana,10.0,5.0,Auto,3.0
+FC Road,Shivaji Nagar,10.0,8.0,Bus,4.0
+JM Road,Shivaji Nagar,10.0,6.0,Bus,3.0
+JM Road,PMC,10.0,5.0,Bus,3.0
+Shaniwar Wada,Kasba Peth,10.0,4.0,Auto,2.0
+Shaniwar Wada,District Court,10.0,6.0,Auto,3.0
+Shaniwar Wada,PMC,10.0,5.0,Auto,3.0
+Senapati Bapat Road,Pune University,10.0,7.0,Bus,4.0
+Senapati Bapat Road,Deccan Gymkhana,15.0,10.0,Bus,6.0
+Senapati Bapat Road,Shivaji Nagar,50.0,8.0,Auto,12.0
+Pune Camp (MG Road),Pune Railway Station,15.0,10.0,Auto,6.0
+Pune Camp (MG Road),Swargate,15.0,12.0,Bus,8.0
+Pune Camp (MG Road),District Court,50.0,10.0,Cab,15.0
+Koregaon Park,Ruby Hall Clinic,15.0,8.0,Auto,5.0
+Koregaon Park,Bund Garden,10.0,6.0,Auto,4.0
+Koregaon Park,Kalyani Nagar,15.0,8.0,Bus,6.0
+Magarpatta City,Hadapsar Bus Stand,10.0,6.0,Bus,3.0
+Magarpatta City,Pune Railway Station,25.0,25.0,Bus,16.0
+Magarpatta City,Kharadi Bypass,15.0,12.0,Bus,8.0
+Kharadi IT Park (EON),Kharadi Bypass,10.0,6.0,Auto,4.0
+Kharadi IT Park (EON),Viman Nagar,60.0,12.0,Cab,18.0
+Bibwewadi,Swargate,15.0,12.0,Bus,7.0
+Bibwewadi,Katraj Bus Stand,15.0,10.0,Bus,6.0
+Sinhagad Road (Dhayari),Swargate,20.0,22.0,Bus,14.0
+Sinhagad Road (Dhayari),Anand Nagar,60.0,15.0,Auto,16.0

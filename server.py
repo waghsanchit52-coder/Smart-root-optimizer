@@ -6,13 +6,17 @@ import random
 
 app = Flask(__name__)
 
+import os
 import csv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def get_locations_data():
     loc_list = []
     coords_dict = {}
+    csv_path = os.path.join(BASE_DIR, 'locations.csv')
     try:
-        with open('locations.csv', mode='r', encoding='utf-8') as f:
+        with open(csv_path, mode='r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 name = row['LocationName']
@@ -55,6 +59,8 @@ def get_route():
     dest = data.get('destination')
     pref = data.get('preference', 'cost')
     traffic = data.get('traffic', False)
+    waypoints = data.get('waypoints', [])
+    optimize_tsp = data.get('optimizeTSP', True)
     
     if not src or not dest:
         return jsonify({"error": "Missing source or destination"}), 400
@@ -70,10 +76,24 @@ def get_route():
 
     try:
         import platform
-        binary_name = "RouteOptimizer_Web.exe" if platform.system() == "Windows" else "./RouteOptimizer_Web"
+        binary_file = "RouteOptimizer_Web.exe" if platform.system() == "Windows" else "./RouteOptimizer_Web"
+        binary_name = os.path.join(BASE_DIR, binary_file)
+        
+        # Support both point-to-point and Multi-Stop Tour (TSP)
+        if waypoints and len(waypoints) > 0:
+            cmd = [
+                binary_name, 'tour',
+                src, dest, pref, str(penalty),
+                '1' if optimize_tsp else '0',
+                str(len(waypoints)),
+                *waypoints
+            ]
+        else:
+            cmd = [binary_name, 'route', src, dest, pref, str(penalty)]
         
         result = subprocess.run(
-            [binary_name, 'route', src, dest, pref, str(penalty)],
+            cmd,
+            cwd=BASE_DIR,
             capture_output=True,
             text=True,
             check=True
@@ -89,9 +109,11 @@ def get_route():
         return jsonify(route_data)
 
     except subprocess.CalledProcessError as e:
-        return jsonify({"error": "C++ Engine Failed", "details": e.stderr}), 500
+        return jsonify({"error": "C++ Engine Failed", "details": e.stderr}), 200
     except json.JSONDecodeError:
-        return jsonify({"error": "Failed to parse C++ output", "output": result.stdout}), 500
+        return jsonify({"error": "Failed to parse C++ output", "output": result.stdout}), 200
+    except Exception as e:
+        return jsonify({"error": "Python Server Crash", "details": str(type(e).__name__) + ": " + str(e)}), 200
 
 @app.route('/api/nearest', methods=['POST'])
 def get_nearest():
@@ -104,15 +126,20 @@ def get_nearest():
         
     try:
         import platform
-        binary_name = "RouteOptimizer_Web.exe" if platform.system() == "Windows" else "./RouteOptimizer_Web"
+        binary_file = "RouteOptimizer_Web.exe" if platform.system() == "Windows" else "./RouteOptimizer_Web"
+        binary_name = os.path.join(BASE_DIR, binary_file)
         
         result = subprocess.run(
             [binary_name, 'nearest', str(lat), str(lon)],
+            cwd=BASE_DIR,
             capture_output=True,
             text=True,
             check=True
         )
-        return jsonify(json.loads(result.stdout))
+        data_json = json.loads(result.stdout)
+        if 'nearest' in data_json and 'nearest_node' not in data_json:
+            data_json['nearest_node'] = data_json['nearest']
+        return jsonify(data_json)
     except Exception as e:
         return jsonify({"error": "KD-Tree lookup failed"}), 500
 

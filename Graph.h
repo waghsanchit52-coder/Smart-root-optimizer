@@ -43,6 +43,11 @@ struct RouteResult {
     double totalTime;
     double totalCarbon;
     CustomVector<RouteStep> path; 
+    CustomVector<std::string> orderedStops; // Final sequence of visited stops
+    double executionTimeMs = 0.0;
+    int nodesExpanded = 0;
+    double kdTreeTimeUs = 0.0;
+    int memoryPeakKb = 48;
 };
 
 // KD-Tree Node (Using Raw Pointers to prove memory management)
@@ -70,6 +75,9 @@ private:
     void freeKDTree(KDNode* node);
 
 public:
+    Graph() = default;
+    Graph(const Graph&) = delete;
+    Graph& operator=(const Graph&) = delete;
     ~Graph();
 
     bool loadLocationsCSV(const std::string& filename);
@@ -80,10 +88,17 @@ public:
     
     RouteResult findShortestPath(const std::string& src, const std::string& dest, int preference, double weatherPenalty = 1.0);
     
+    // Multi-Stop Routing & Traveling Salesperson Problem (TSP) with Bitmask Dynamic Programming
+    RouteResult findMultiStopRoute(const std::string& src, const std::string& dest, const CustomVector<std::string>& waypoints, int preference, double weatherPenalty = 1.0, bool optimizeOrder = true);
+    
     std::string getLocationName(int id);
     
     void buildKDTree();
     std::string findNearestLocation(double lat, double lon);
+    double getLastKDTreeTimeUs() const { return lastKDTreeTimeUs; }
+
+private:
+    double lastKDTreeTimeUs = 0.0;
 };
 
 #endif

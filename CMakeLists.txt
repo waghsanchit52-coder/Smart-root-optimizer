@@ -3,4 +3,4 @@ project(SmartRouteOptimizer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(RouteOptimizer main.cpp Graph.cpp)
+add_executable(RouteOptimizer_Web main.cpp Graph.cpp)

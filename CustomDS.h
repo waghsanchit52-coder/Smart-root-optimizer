@@ -51,16 +51,23 @@ public:
 
     void push_back(const T& data) {
         if (current == capacity) {
-            T* temp = new T[capacity * 2];
-            for (int i = 0; i < capacity; i++) {
+            int newCap = (capacity <= 0) ? 2 : capacity * 2;
+            T* temp = new T[newCap];
+            for (int i = 0; i < current; i++) {
                 temp[i] = arr[i];
             }
             delete[] arr;
-            capacity *= 2;
+            capacity = newCap;
             arr = temp;
         }
         arr[current] = data;
         current++;
+    }
+
+    void pop_back() {
+        if (current > 0) {
+            current--;
+        }
     }
 
     T& operator[](int index) {
@@ -74,13 +81,24 @@ public:
     int size() const { return current; }
     
     void resize(int newSize, T defaultValue = T()) {
-        T* temp = new T[newSize];
-        for (int i = 0; i < newSize; i++) {
-            if (i < current) temp[i] = arr[i];
-            else temp[i] = defaultValue;
+        if (newSize <= capacity) {
+            for (int i = current; i < newSize; i++) {
+                arr[i] = defaultValue;
+            }
+            current = newSize;
+            return;
+        }
+        int newCap = (newSize > capacity * 2) ? newSize : capacity * 2;
+        if (newCap < 2) newCap = 2;
+        T* temp = new T[newCap];
+        for (int i = 0; i < current; i++) {
+            temp[i] = arr[i];
+        }
+        for (int i = current; i < newSize; i++) {
+            temp[i] = defaultValue;
         }
         delete[] arr;
-        capacity = newSize;
+        capacity = newCap;
         current = newSize;
         arr = temp;
     }
@@ -131,6 +149,49 @@ public:
         numElements = 0;
         table = new HashNode<K, V>*[capacity];
         for (int i = 0; i < capacity; i++) table[i] = nullptr;
+    }
+
+    // Copy Constructor
+    CustomHashMap(const CustomHashMap& other) {
+        capacity = other.capacity;
+        numElements = 0;
+        table = new HashNode<K, V>*[capacity];
+        for (int i = 0; i < capacity; i++) table[i] = nullptr;
+        for (int i = 0; i < capacity; i++) {
+            HashNode<K, V>* entry = other.table[i];
+            while (entry != nullptr) {
+                insert(entry->key, entry->value);
+                entry = entry->next;
+            }
+        }
+    }
+
+    // Assignment Operator
+    CustomHashMap& operator=(const CustomHashMap& other) {
+        if (this != &other) {
+            for (int i = 0; i < capacity; i++) {
+                HashNode<K, V>* entry = table[i];
+                while (entry != nullptr) {
+                    HashNode<K, V>* prev = entry;
+                    entry = entry->next;
+                    delete prev;
+                }
+            }
+            delete[] table;
+
+            capacity = other.capacity;
+            numElements = 0;
+            table = new HashNode<K, V>*[capacity];
+            for (int i = 0; i < capacity; i++) table[i] = nullptr;
+            for (int i = 0; i < capacity; i++) {
+                HashNode<K, V>* entry = other.table[i];
+                while (entry != nullptr) {
+                    insert(entry->key, entry->value);
+                    entry = entry->next;
+                }
+            }
+        }
+        return *this;
     }
 
     ~CustomHashMap() {
@@ -259,13 +320,13 @@ public:
         if (heap.size() <= 0) return {-1.0, -1};
         if (heap.size() == 1) {
             HeapPair root = heap[0];
-            heap.resize(0);
+            heap.pop_back();
             return root;
         }
 
         HeapPair root = heap[0];
         heap[0] = heap[heap.size() - 1];
-        heap.resize(heap.size() - 1);
+        heap.pop_back();
         heapifyDown(0);
 
         return root;
