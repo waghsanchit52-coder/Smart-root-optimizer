@@ -1,0 +1,49 @@
+Source,Destination,Cost,Time,Mode,Carbon
+PCMC,Sant Tukaram Nagar,2.5,5.0,Metro,2.0
+Sant Tukaram Nagar,Nashik Phata,2.5,5.0,Metro,2.0
+Nashik Phata,Kasarwadi,2.5,5.0,Metro,2.0
+Kasarwadi,Phugewadi,2.5,5.0,Metro,2.0
+Phugewadi,Dapodi,2.5,5.0,Metro,2.0
+Dapodi,Bopodi,2.5,5.0,Metro,2.0
+Bopodi,Khadki,2.5,5.0,Metro,2.0
+Khadki,Range Hill,2.5,5.0,Metro,2.0
+Range Hill,Shivaji Nagar,2.5,5.0,Metro,2.0
+Shivaji Nagar,District Court,2.5,5.0,Metro,2.0
+District Court,Kasba Peth,2.5,5.0,Metro,2.0
+Kasba Peth,Mahatma Phule Mandai,2.5,5.0,Metro,2.0
+Mahatma Phule Mandai,Swargate,2.5,5.0,Metro,2.0
+Vanaz,Anand Nagar,2.5,5.0,Metro,2.0
+Anand Nagar,Paud Phata,2.5,5.0,Metro,2.0
+Paud Phata,S.N.D.T College,2.5,5.0,Metro,2.0
+S.N.D.T College,Garware College,2.5,5.0,Metro,2.0
+Garware College,Deccan Gymkhana,2.5,5.0,Metro,2.0
+Deccan Gymkhana,Chhatrapati Sambhaji Udyan,2.5,5.0,Metro,2.0
+Chhatrapati Sambhaji Udyan,PMC,2.5,5.0,Metro,2.0
+PMC,District Court,2.5,5.0,Metro,2.0
+District Court,R.T.O Pune,2.5,5.0,Metro,2.0
+R.T.O Pune,Pune Railway Station,2.5,5.0,Metro,2.0
+Pune Railway Station,Ruby Hall Clinic,2.5,5.0,Metro,2.0
+Ruby Hall Clinic,Bund Garden,2.5,5.0,Metro,2.0
+Bund Garden,Yerawada,2.5,5.0,Metro,2.0
+Yerawada,Kalyani Nagar,2.5,5.0,Metro,2.0
+Kalyani Nagar,Ramwadi,2.5,5.0,Metro,2.0
+Shivaji Nagar,Swargate,20.0,30.0,Bus,15.0
+Shivaji Nagar,Swargate,150.0,15.0,Cab,40.0
+Shivaji Nagar,Swargate,80.0,20.0,Auto,25.0
+Swargate,Kothrud,15.0,25.0,Bus,12.0
+Swargate,Kothrud,100.0,15.0,Cab,35.0
+Kothrud,Paud Phata,10.0,15.0,Bus,8.0
+Kothrud,Hinjewadi,35.0,60.0,Bus,30.0
+Kothrud,Hinjewadi,300.0,40.0,Cab,80.0
+Kothrud,Hinjewadi,200.0,50.0,Auto,50.0
+Shivaji Nagar,Viman Nagar,25.0,40.0,Bus,20.0
+Shivaji Nagar,Viman Nagar,250.0,25.0,Cab,60.0
+Viman Nagar,Pune Airport,15.0,10.0,Auto,10.0
+Pune Railway Station,Viman Nagar,20.0,30.0,Bus,18.0
+Pune Railway Station,Viman Nagar,150.0,20.0,Cab,45.0
+Hinjewadi,Baner,15.0,20.0,Bus,10.0
+Hinjewadi,Baner,120.0,15.0,Cab,30.0
+Baner,Shivaji Nagar,20.0,30.0,Bus,15.0
+Baner,Shivaji Nagar,150.0,20.0,Cab,40.0
+Baner,Pune University,10.0,15.0,Bus,5.0
+Pune University,Shivaji Nagar,10.0,15.0,Bus,5.0
